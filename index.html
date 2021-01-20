@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Output</title>
+
+    <!-- Stylesheets -->
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+            top: 0px;
+        }
+    </style>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+</head>
+
+<body>
+    <div id="map"></div>
+    <script src="Pixel_opening.js"></script>
+    <script src="Pixel_unit.js"></script>
+    <script src="Pixel_points.js"></script>
+    <script>
+        var center = L.bounds([1.300836, 103.7898], [1.300836, 103.7898]).getCenter();
+        var map = L.map('map', {
+            zoomControl: false
+        }).setView([center.x, center.y], 19);
+
+        var basemap = L.tileLayer('https://maps-{s}.onemap.sg/v3/Default/{z}/{x}/{y}.png', {
+            detectRetina: true,
+            maxZoom: 24,
+            minZoom: 11,
+            maxNativeZoom: 18
+        });
+
+        new L.Control.Zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        map.setMaxBounds([[1.56073, 104.1147], [1.16, 103.502]]);
+
+        basemap.addTo(map);
+
+        // Add Floorplan Layers
+        // Add Pixel Layers
+        var colourMap = {
+            elevator: "#119da4",
+            restroom: "#3c4f76",
+            room: "#cbcbcb",
+            stairs: "#fea634",
+            terrace: "#faffd6",
+            unspecified: "#434343",
+            walkway: "#fff",
+        };
+
+        function unitStyle(unitCategory) {
+            return {
+                weight: 1,
+                color: "#999",
+                fillColor: colourMap[unitCategory],
+                fillOpacity: 1,
+            };
+        }
+
+        var pixelUnitL1 = L.geoJSON(pixelUnit, {
+            style: function (feature) {
+                switch (feature.properties.category) {
+                    case "elevator":
+                        return unitStyle("elevator");
+                    case "restroom":
+                        return unitStyle("restroom");
+                    case "room":
+                        return unitStyle("room");
+                    case "stairs":
+                        return unitStyle("stairs");
+                    case "terrace":
+                        return unitStyle("terrace");
+                    case "unspecified":
+                        return unitStyle("unspecified");
+                    case "walkway":
+                        return unitStyle("walkway");
+                }
+            },
+            filter: function (feature, layer) {
+                return feature.properties.level == "Level 1";
+            },
+        });
+
+        var pixelUnitL2 = L.geoJSON(pixelUnit, {
+            style: function (feature) {
+                switch (feature.properties.category) {
+                    case "elevator":
+                        return unitStyle("elevator");
+                    case "restroom":
+                        return unitStyle("restroom");
+                    case "room":
+                        return unitStyle("room");
+                    case "stairs":
+                        return unitStyle("stairs");
+                    case "terrace":
+                        return unitStyle("terrace");
+                    case "unspecified":
+                        return unitStyle("unspecified");
+                    case "walkway":
+                        return unitStyle("walkway");
+                }
+            },
+            filter: function (feature, layer) {
+                return feature.properties.level == "Level 2";
+            },
+        });
+
+        var pixelUnitL3 = L.geoJSON(pixelUnit, {
+            style: function (feature) {
+                switch (feature.properties.category) {
+                    case "elevator":
+                        return unitStyle("elevator");
+                    case "restroom":
+                        return unitStyle("restroom");
+                    case "room":
+                        return unitStyle("room");
+                    case "stairs":
+                        return unitStyle("stairs");
+                    case "terrace":
+                        return unitStyle("terrace");
+                    case "unspecified":
+                        return unitStyle("unspecified");
+                    case "walkway":
+                        return unitStyle("walkway");
+                }
+            },
+            filter: function (feature, layer) {
+                return feature.properties.level == "Level 3";
+            },
+        });
+
+        var pixelOpeningL1 = L.geoJSON(pixelOpening, {
+            style: { color: "#22ecdf", opacity: 0.65 },
+            filter: function (feature, layer) {
+                return feature.properties.Level == "Level 1";
+            },
+        });
+
+        var pixelOpeningL2 = L.geoJSON(pixelOpening, {
+            style: { color: "#22ecdf", opacity: 0.65 },
+            filter: function (feature, layer) {
+                return feature.properties.Level == "Level 2";
+            },
+        });
+
+        var pixelOpeningL3 = L.geoJSON(pixelOpening, {
+            style: { color: "#22ecdf", opacity: 0.65 },
+            filter: function (feature, layer) {
+                return feature.properties.Level == "Level 3";
+            },
+        });
+
+
+        // Add Points 
+        //https://stackoverflow.com/questions/31287839/leaflet-geojson-icon-according-to-value
+        //https://gis.stackexchange.com/questions/121424/leaflet-how-to-use-a-custom-marker-on-a-geojson-layer 
+        // Icon 
+        // Define Icon Class
+        var categoryIcon = L.Icon.extend({
+            options: { iconSize: [20, 20] }
+        });
+
+        var doorIcon = new categoryIcon({ iconUrl: 'door.png' }),
+            liftIcon = new categoryIcon({ iconUrl: 'lift.png' }),
+            entranceIcon = new categoryIcon({ iconUrl: 'entrance.png' }),
+            stairsIcon = new categoryIcon({ iconUrl: 'stairs.png' }),
+            rampIcon = new categoryIcon({ iconUrl: 'ramp.png' });
+
+        // add points
+        var pixelPointsL1 = L.geoJSON(pixelPoints, {
+            pointToLayer: function (feature, latlng) {
+                popupContent = "<center><strong>" + feature.properties.name + "</strong><br>" + feature.properties.category + "<br>"+  feature.properties.file_name + '<br><img src="https://geoai-dtp-images.s3-ap-southeast-1.amazonaws.com/test/' + feature.properties.file_name + '" height="150px"/>'
+                switch (feature.properties.category) {
+                    case "door":
+                        marker = L.marker(latlng, { icon: doorIcon }).addTo(map);
+                        marker.bindPopup(popupContent);
+                        break;
+                    case "stairs":
+                        marker = L.marker(latlng, { icon: stairsIcon }).addTo(map);
+                        marker.bindPopup(popupContent);
+                        break;
+                    case "lift":
+                        marker = L.marker(latlng, { icon: liftIcon }).addTo(map);
+                        marker.bindPopup(popupContent);
+                        break;
+                    case "ramp":
+                        marker = L.marker(latlng, { icon: rampIcon }).addTo(map);
+                        marker.bindPopup(popupContent);
+                        break;
+                }
+            },
+            filter: function (feature, layer) {
+                return feature.properties.level == "Level 1";
+            }
+        }).addTo(map);
+   
+
+
+
+        // Group points, lines and polylines and display on map
+        var pixelL1 = L.layerGroup().addLayer(pixelUnitL1).addLayer(pixelOpeningL1).addLayer(pixelPointsL1);
+        var pixelL2 = L.layerGroup().addLayer(pixelUnitL2).addLayer(pixelOpeningL2);
+        var pixelL3 = L.layerGroup().addLayer(pixelUnitL3).addLayer(pixelOpeningL3);
+        var PIXELMaps = {
+            "Level 1": pixelL1,
+            "Level 2": pixelL2,
+            "Level 3": pixelL3,
+        };
+
+        L.control.layers(PIXELMaps).addTo(map);
+
+
+
+    </script>
+</body>
+
+</html>
