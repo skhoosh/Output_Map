@@ -40,23 +40,6 @@ var pixelPoints = {
 			"type" : "Feature",
 			"geometry" : {
 				"type" : "Point",
-				"coordinates" : [ 103.789682, 1.300849 ]
-			},
-			"properties" : {
-				"file_name" : "16080185726141261521443873974021.jpg",
-				"name" : "PIXEL IMPIXEL STUDIOS 2",
-				"category" : "door",
-				"exif_x" : 103.790052,
-				"exif_y" : 1.3006268,
-				"user_x" : 103.789682,
-				"user_y" : 1.300849,
-				"level" : "Level 1"
-			}
-		},
-		{
-			"type" : "Feature",
-			"geometry" : {
-				"type" : "Point",
 				"coordinates" : [ 103.789757, 1.301021 ]
 			},
 			"properties" : {
